@@ -5,12 +5,15 @@ import oneagent
 sdk = oneagent.get_sdk()
 
 if sdk is None:
-    print("Failed to retrieve Dynatrace OneAgent SDK instance.")
+    print("❌ Failed to retrieve Dynatrace OneAgent SDK instance.")
 else:
-    print("Dynatrace OneAgent SDK instance retrieved successfully.")
+    print("✅ Dynatrace OneAgent SDK instance retrieved successfully.")
 
-# Start OneAgent (No explicit initialize() function exists in the SDK)
-sdk.ensure_instrumented()  # This is the correct method to initialize instrumentation
+# Check if OneAgent is active
+if sdk.is_instrumented():
+    print("✅ Dynatrace OneAgent SDK is instrumented.")
+else:
+    print("❌ Dynatrace OneAgent SDK is NOT instrumented.")
 
 app = Flask(__name__)
 
