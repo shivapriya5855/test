@@ -1,0 +1,22 @@
+from flask import Flask
+import oneagent
+
+# Initialize Dynatrace OneAgent SDK
+sdk = oneagent.get_sdk()
+
+if sdk is None:
+    print("Failed to retrieve Dynatrace OneAgent SDK instance.")
+else:
+    print("Dynatrace OneAgent SDK instance retrieved successfully.")
+
+# Start OneAgent (No explicit initialize() function exists in the SDK)
+sdk.ensure_instrumented()  # This is the correct method to initialize instrumentation
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello, world!'
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=8080)
