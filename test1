@@ -1,26 +1,5 @@
-from flask import Flask
-import oneagent
-
-# Get Dynatrace SDK
-sdk = oneagent.get_sdk()
-
-if sdk:
-    print("✅ Dynatrace OneAgent SDK retrieved successfully.")
-
-    # Attach the SDK (ensures it is properly loaded)
-    try:
-        sdk.attach()
-        print("✅ Dynatrace OneAgent SDK successfully attached.")
-    except Exception as e:
-        print(f"❌ Dynatrace OneAgent SDK attach failed: {e}")
-else:
-    print("❌ Failed to retrieve Dynatrace OneAgent SDK instance.")
-
-app = Flask(__name__)
-
-@app.route('/')
-def hello_world():
-    return 'Hello, world!'
-
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    try:
+        app.run(debug=True, host='0.0.0.0', port=8080)
+    finally:
+        oneagent.shutdown()
