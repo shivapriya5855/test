@@ -1,88 +1,11 @@
-apiVersion: v1
-kind: Template
-objects:
-  - apiVersion: v1
-    kind: DeploymentConfig
-    metadata:
-      name: ${APP}
-      labels:
-        app: ${APP}
-      annotations:
-        oneagent.dynatrace.com/inject: "true"
-    spec:
-      replicas: 1
-      selector:
-        app: ${APP}
-        deploymentconfig: ${APP}
-      strategy:
-        resources: {}
-        rollingParams:
-          intervalSeconds: 1
-          maxSurge: 25%
-          maxUnavailable: 25%
-          timeoutSeconds: 600
-          updatePeriodSeconds: 1
-        type: Rolling
-      template:
-        metadata:
-          labels:
-            app: ${APP}
-            deploymentconfig: ${APP}
-        spec:
-          containers:
-            - name: ${APP}
-              image: ${REG}/${AIT}/${IMG}:${TAG}
-              imagePullPolicy: Always
-              ports:
-                - containerPort: 8080
-                  protocol: TCP
-              resources: {}
-              terminationMessagePath: /dev/termination-log1
-              env:
-                - name: MW_ENABLE_DYNATRACE
-                  value: "true"
-                - name: MW_DYNATRACE_TENANT_ID
-                  value: ""
-                - name: DT_CUSTOM_PROP
-                  value: "CONTAINER_AIT="
-              volumeMounts:
-                - name: oneagent-volume
-                  mountPath: /var/lib/dynatrace/oneagent
-          volumes:
-            - name: oneagent-volume
-              emptyDir: {}
-          restartPolicy: Always
-          securityContext: {}
-          terminationGracePeriodSeconds: 30
-      test: false
-      triggers:
-        - type: ConfigChange
-parameters:
-  - name: APP
-    description: App Name
-    displayName: App Name
-    required: true
-  - name: REG
-    description: Registry
-    displayName: Registry
-    required: true
-  - name: TAG
-    description: Release Tag
-    displayName: Tag
-    required: true
-  - name: IMG
-    description: Image Name
-    displayName: Image Name
-    required: true
-  - name: AIT
-    description: AIT Number
-    displayName: AIT
-    required: true
-  - name: PROJ
-    description: Project Name
-    displayName: Proj Name
-    required: true
-  - name: CLUSTER
-    description: CLUSTER Name
-    displayName: CLUSTER Name
-    required: true
+package com.example.helloworld;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class HelloWorldApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(HelloWorldApplication.class, args);
+    }
+}
