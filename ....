@@ -1,0 +1,2 @@
+Since you previously mentioned that the application was running with a Docker strategy, could you try building it again using the Docker strategy with the current CI/CD repository? Please also verify whether the application is running correctly and if the routes are accessible.
+
