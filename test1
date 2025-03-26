@@ -1,7 +1,37 @@
-oc patch route vaultproxyweb-bc -n cp-2852679 --type=merge -p '{"spec":{"tls":{"certificate":"'"$(oc get secret vaultproxyweb-bc-certificate-tls -n cp-2852679 -o jsonpath='{.data.tls\.crt}' | base64 -d)"'","key":"'"$(oc get secret vaultproxyweb-bc-certificate-tls -n cp-2852679 -o jsonpath='{.data.tls\.key}' | base64 -d)"'","caCertificate":"'"$(oc get secret vaultproxyweb-bc-certificate-tls -n cp-2852679 -o jsonpath='{.data.ca\.crt}' | base64 -d)"'"}}}'
+// Determine the branch type
+def branch = this.env.BRANCH_NAME.split('/')[0]
+
+// Default values (optional fallback)
+def openshiftURI = ''
+def openshiftBuildProject = ''
+
+switch (branch) {
+    case 'develop':
+        echo "Detected develop branch: setting OpenShift for DEV"
+        openshiftURI = "https://api.useastl6.bofa.com:6443/"
+        openshiftBuildProject = ""
+        break
+
+    case 'release':
+        echo "Detected release branch: setting OpenShift for UAT"
+        openshiftURI = "https://api.useast27.bofa.com:6443/"
+        openshiftBuildProject = ""
+        break
+
+    default:
+        error("Unsupported branch: ${branch}. Exiting...")
+}
 
 
-oc delete pod -n openshift-ingress -l app=router
 
+// OpenShift build properties
+executeOpenshiftBuild = true
+openshiftApp = "vaultproxyweb-bc"
+openshiftImageName = "vaultproxyweb-bc"
+openshiftImageTagPrefix = version
+openShiftBuildConfig = "manifests/bc.yaml"
+openshiftStageAgent = "ETASOPENSHIFT"
 
-openssl s_client -connect vaultproxyweb-bc.cp-2852679.apps.useast16.bofa.com:443 -showcerts
+// Use the branch-based values
+openshiftBuildProject = openshiftBuildProject
+openshiftURI = openshiftURI
